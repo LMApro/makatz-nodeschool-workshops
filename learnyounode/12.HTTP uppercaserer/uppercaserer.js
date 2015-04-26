@@ -1,8 +1,14 @@
 var http = require("http");
+var map = require("through2-map");
 
 var server = http.createServer(function(req, res){
-	console.log(req.method);
-	console.log(req.body);
-	res.end();
+	if (req.method != 'POST') {
+		return res.end('Must be a POST request');
+	}
+	
+	req.pipe(map(function(chunk){
+		return chunk.toString().toUpperCase();
+	})).pipe(res);
 });
+
 server.listen(Number(process.argv[2]));
